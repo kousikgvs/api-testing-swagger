@@ -1,0 +1,233 @@
+swagger: '2.0'
+info:
+  title: E-Commerce API
+  description: An API for managing users, products, and orders in an e-commerce system
+  version: 1.0.0
+host: localhost:3000
+basePath: /
+schemes:
+  - http
+consumes:
+  - application/json
+produces:
+  - application/json
+paths:
+  /api/users:
+    post:
+      summary: Create a new user
+      description: Creates a new user and returns it
+      parameters:
+        - in: body
+          name: user
+          description: The user to create
+          required: true
+          schema:
+            type: object
+            properties:
+              username:
+                type: string
+              email:
+                type: string
+              createdAt:
+                type: string
+                format: date-time
+              updatedAt:
+                type: string
+                format: date-time
+      responses:
+        200:
+          description: User created
+          schema:
+            $ref: '#/definitions/User'
+
+  /api/products:
+    post:
+      summary: Create a new product
+      description: Creates a new product and returns it
+      parameters:
+        - in: body
+          name: product
+          description: The product to create
+          required: true
+          schema:
+            type: object
+            properties:
+              productName:
+                type: string
+              price:
+                type: number
+              stockQuantity:
+                type: integer
+              createdAt:
+                type: string
+                format: date-time
+              updatedAt:
+                type: string
+                format: date-time
+      responses:
+        200:
+          description: Product created
+          schema:
+            $ref: '#/definitions/Product'
+
+  /api/orders:
+    post:
+      summary: Place a new order
+      description: Places a new order and returns the order details
+      parameters:
+        - in: body
+          name: order
+          description: The order to place
+          required: true
+          schema:
+            type: object
+            properties:
+              userId:
+                type: integer
+              orderItems:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    productId:
+                      type: integer
+                    quantity:
+                      type: integer
+      responses:
+        200:
+          description: Order placed
+          schema:
+            $ref: '#/definitions/OrderWithItems'
+
+  /api/users/{userId}/orders:
+    get:
+      summary: Get user with orders
+      description: Retrieves a user along with their orders
+      parameters:
+        - in: path
+          name: userId
+          description: ID of the user to retrieve
+          required: true
+          type: integer
+      responses:
+        200:
+          description: User with orders
+          schema:
+            $ref: '#/definitions/UserWithOrders'
+
+  /api/orders/{orderId}/items:
+    get:
+      summary: Get order with items
+      description: Retrieves an order along with its items
+      parameters:
+        - in: path
+          name: orderId
+          description: ID of the order to retrieve
+          required: true
+          type: integer
+      responses:
+        200:
+          description: Order with items
+          schema:
+            $ref: '#/definitions/OrderWithItems'
+
+definitions:
+  User:
+    type: object
+    properties:
+      userId:
+        type: integer
+      username:
+        type: string
+      email:
+        type: string
+      createdAt:
+        type: string
+        format: date-time
+      updatedAt:
+        type: string
+        format: date-time
+
+  Product:
+    type: object
+    properties:
+      productId:
+        type: integer
+      productName:
+        type: string
+      price:
+        type: number
+      stockQuantity:
+        type: integer
+      createdAt:
+        type: string
+        format: date-time
+      updatedAt:
+        type: string
+        format: date-time
+
+  Order:
+    type: object
+    properties:
+      orderId:
+        type: integer
+      userId:
+        type: integer
+      totalAmount:
+        type: number
+      orderDate:
+        type: string
+      createdAt:
+        type: string
+        format: date-time
+      updatedAt:
+        type: string
+        format: date-time
+
+  OrderItem:
+    type: object
+    properties:
+      orderItemId:
+        type: integer
+      productId:
+        type: integer
+      quantity:
+        type: integer
+      subtotal:
+        type: number
+      createdAt:
+        type: string
+        format: date-time
+      updatedAt:
+        type: string
+        format: date-time
+
+  UserWithOrders:
+    type: object
+    properties:
+      userId:
+        type: integer
+      username:
+        type: string
+      email:
+        type: string
+      orders:
+        type: array
+        items:
+          $ref: '#/definitions/Order'
+
+  OrderWithItems:
+    type: object
+    properties:
+      orderId:
+        type: integer
+      userId:
+        type: integer
+      totalAmount:
+        type: number
+      orderDate:
+        type: string
+      orderItems:
+        type: array
+        items:
+          $ref: '#/definitions/OrderItem'
